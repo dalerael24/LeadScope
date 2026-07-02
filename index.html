@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LeadScope is a privacy-safe workspace for cited public-source lead research.">
+  <meta name="color-scheme" content="dark">
+  <title>LeadScope | Public-source lead intelligence</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="LeadScope home">
+      <svg class="logo" viewBox="0 0 56 56" role="img" aria-label="LeadScope radar logo">
+        <circle cx="28" cy="28" r="21"></circle>
+        <circle cx="28" cy="28" r="12"></circle>
+        <path d="M28 28L48 18A22 22 0 0 1 49 35Z" class="beam"></path>
+        <circle cx="31" cy="24" r="3.2" class="node"></circle>
+        <path d="M25 34c1.5-4 10.5-4 12 0" class="profile"></path>
+      </svg>
+      <span><strong>LeadScope</strong><small>Public-source lead intelligence</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="privacy-pill"><i></i> Local session only</span>
+      <button class="btn btn-ghost" id="loadDemoBtn" type="button">Load fictional demo</button>
+      <button class="btn btn-danger-ghost" id="clearBtn" type="button">Clear all data</button>
+    </div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Research console / 01</p>
+        <h1>Build a lead brief<br><span>you can defend.</span></h1>
+        <p class="hero-copy">Verify identity, compare candidates, document public professional sources, and keep every conclusion tied to evidence.</p>
+      </div>
+      <div class="hero-status" aria-label="Research principles">
+        <div><span>01</span><p><b>Public sources</b><small>No private-data enrichment</small></p></div>
+        <div><span>02</span><p><b>Source dates</b><small>Stale evidence is flagged</small></p></div>
+        <div><span>03</span><p><b>Human review</b><small>No forced identity matches</small></p></div>
+      </div>
+    </section>
+
+    <nav class="workflow" aria-label="Lead research workflow">
+      <button class="step active" data-view="setup"><span>01</span> Lead setup</button>
+      <button class="step" data-view="research"><span>02</span> Research desk <b id="sourceCountBadge">0</b></button>
+      <button class="step" data-view="candidates"><span>03</span> Match candidates <b id="candidateCountBadge">0</b></button>
+      <button class="step" data-view="brief"><span>04</span> Lead brief</button>
+    </nav>
+
+    <section class="view active" id="view-setup">
+      <div class="section-heading">
+        <div><p class="eyebrow">01 / Lead setup</p><h2>Define the professional target</h2></div>
+        <p>Start with what you know. Unknown fields are safer than assumptions.</p>
+      </div>
+      <form id="leadForm" class="panel form-panel" novalidate>
+        <div class="panel-kicker"><span>Target profile</span><small><b>*</b> Required</small></div>
+        <div class="form-grid">
+          <label>Full name <b>*</b><input id="fullName" required autocomplete="off" placeholder="e.g. Jordan Lee"></label>
+          <label>Job title<input id="jobTitle" autocomplete="off" placeholder="e.g. VP, Real Estate"></label>
+          <label>Company<input id="company" autocomplete="organization" placeholder="e.g. Northstar Coffee"></label>
+          <label>Professional location<input id="location" autocomplete="off" placeholder="e.g. Chicago, IL"></label>
+          <label>Industry<input id="industry" autocomplete="off" placeholder="e.g. Multi-unit retail"></label>
+          <label>LinkedIn or professional profile URL<input id="linkedinUrl" type="url" autocomplete="off" placeholder="https://..."></label>
+          <label class="span-2">Known details<textarea id="knownDetails" rows="3" placeholder="Only public, professional context that helps distinguish this person"></textarea></label>
+          <label class="span-2">Research purpose <b>*</b><textarea id="purpose" required rows="3" placeholder="Describe the legitimate business reason for this research"></textarea></label>
+        </div>
+        <div class="compliance-box">
+          <label class="check-label"><input type="checkbox" id="compliance"><span></span><p><b>I confirm this will be used only for legitimate professional outreach.</b><small>No harassment, surveillance, private contact discovery, or sensitive personal data.</small></p></label>
+        </div>
+        <div class="panel-footer">
+          <p id="setupMessage" class="inline-message" role="status"></p>
+          <button class="btn btn-primary" id="toResearchBtn" type="submit">Generate research plan <span>→</span></button>
+        </div>
+      </form>
+    </section>
+
+    <section class="view" id="view-research">
+      <div class="section-heading">
+        <div><p class="eyebrow">02 / Research desk</p><h2>Search broadly. Record precisely.</h2></div>
+        <p>Search links open live web results. Add only relevant public professional evidence.</p>
+      </div>
+      <div class="research-grid">
+        <article class="panel query-panel">
+          <div class="panel-kicker"><span>Deep-search plan</span><small id="queryTarget">Awaiting target</small></div>
+          <div id="queryList" class="query-list empty-state"><p>Complete lead setup to generate queries.</p></div>
+        </article>
+        <article class="panel guardrail-panel">
+          <div class="guardrail-icon">◎</div>
+          <p class="eyebrow">Contact guardrail</p>
+          <h3>Official paths first.</h3>
+          <p>Prioritize company contact pages, inquiry forms, staff directories, official bios, and professional profiles.</p>
+          <ul>
+            <li>Accept clearly published business emails</li>
+            <li>Label sourced patterns as unverified</li>
+            <li>Never add private phones or personal emails</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="panel source-panel">
+        <div class="panel-kicker"><span>Source ledger</span><button class="text-btn" id="addSourceBtn" type="button">+ Add source</button></div>
+        <div id="sourceList" class="source-list"></div>
+        <div id="sourceEmpty" class="empty-state large"><span>⌁</span><h3>No sources logged yet</h3><p>Every factual claim in the final brief should point back here.</p></div>
+      </article>
+
+      <article class="panel contact-panel">
+        <div class="panel-kicker"><span>Professional contact paths</span><button class="text-btn" id="addContactBtn" type="button">+ Add contact path</button></div>
+        <div class="contact-note"><b>Accuracy rule</b> An email is verified only when the exact address appears on a legitimate public source. Patterns remain unverified until confirmed.</div>
+        <div id="contactList" class="source-list"></div>
+        <div id="contactEmpty" class="empty-state compact"><p>No contact paths recorded.</p></div>
+      </article>
+
+      <div class="view-actions"><button class="btn btn-secondary" data-go="setup">← Back</button><button class="btn btn-primary" data-go="candidates">Compare candidates <span>→</span></button></div>
+    </section>
+
+    <section class="view" id="view-candidates">
+      <div class="section-heading">
+        <div><p class="eyebrow">03 / Candidate matching</p><h2>Resolve the right person</h2></div>
+        <p>Compare up to three plausible matches. Below 50 means not identified.</p>
+      </div>
+      <div class="score-legend panel">
+        <span><i class="score-high"></i><b>90-100</b> Confirmed</span>
+        <span><i class="score-good"></i><b>70-89</b> Strong match</span>
+        <span><i class="score-mid"></i><b>50-69</b> Possible</span>
+        <span><i class="score-low"></i><b>0-49</b> Do not identify</span>
+      </div>
+      <div id="candidateList" class="candidate-grid"></div>
+      <button class="add-candidate" id="addCandidateBtn" type="button"><span>+</span> Add candidate for comparison <small>Maximum 3</small></button>
+      <div class="view-actions"><button class="btn btn-secondary" data-go="research">← Back</button><button class="btn btn-primary" id="buildBriefBtn">Build cited brief <span>→</span></button></div>
+    </section>
+
+    <section class="view" id="view-brief">
+      <div class="section-heading report-heading">
+        <div><p class="eyebrow">04 / Lead brief</p><h2>Review before outreach</h2></div>
+        <div class="report-actions"><button class="btn btn-ghost" id="copyBtn">Copy report</button><button class="btn btn-primary" id="exportBtn">Export Markdown ↓</button></div>
+      </div>
+      <div class="report-meta panel">
+        <div><span>Target</span><b id="reportTarget">Unknown</b></div>
+        <div><span>Evidence</span><b id="reportEvidence">0 sources</b></div>
+        <div><span>Freshness</span><b id="reportFreshness">Needs sources</b></div>
+        <div><span>Identity confidence</span><b id="reportConfidence">Needs verification</b></div>
+      </div>
+      <div class="report-layout">
+        <article class="report panel" id="reportOutput"></article>
+        <aside class="quality-sidebar">
+          <div class="panel quality-card"><p class="eyebrow">Evidence quality</p><div class="quality-ring" id="qualityRing"><span id="qualityScore">0</span><small>/ 100</small></div><p id="qualityMessage">Add dated sources to improve this brief.</p></div>
+          <div class="panel checklist-card"><p class="eyebrow">Pre-outreach check</p><ul id="preflightList"></ul></div>
+        </aside>
+      </div>
+      <div class="view-actions"><button class="btn btn-secondary" data-go="candidates">← Revise candidates</button></div>
+    </section>
+  </main>
+
+  <footer><div class="brand-mark">LS</div><p><b>LeadScope</b><br><span>Evidence over assumptions.</span></p><p class="footer-right">Data stays in this browser tab and is cleared when the tab closes.<br>No account. No database. No tracking.</p></footer>
+
+  <dialog id="editorDialog">
+    <form method="dialog" id="editorForm">
+      <div class="dialog-head"><div><p class="eyebrow" id="dialogEyebrow">Add evidence</p><h2 id="dialogTitle">Source</h2></div><button class="icon-btn" value="cancel" aria-label="Close">×</button></div>
+      <div id="dialogFields" class="dialog-fields"></div>
+      <div class="dialog-actions"><button class="btn btn-secondary" value="cancel">Cancel</button><button class="btn btn-primary" id="dialogSaveBtn" value="default">Save record</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
